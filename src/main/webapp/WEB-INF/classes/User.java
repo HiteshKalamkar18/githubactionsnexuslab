@@ -1,64 +1,81 @@
 package beans;
 
-import java.util.Hashtable;
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.sql.*;
 
 public class User {
-  public String UserName = "";
-  public String Password = "";
-  public String connectionUrl = "";
 
-  public void setconnectionUrl(String url) {
-    connectionUrl = url;
-  }
+    private String userName = "";
+    private String password = "";
+    private String connectionUrl = "";
 
-  public void setUserName(String username) {
-    UserName = username;
-  }
-  public void setPassword(String password) {
-    Password = password;
-  }
-
-  public String getconnectionUrl() {
-    return connectionUrl;
-  }
-
-public String getUserName() {
-    return UserName;
-  }
-
-public String getPassword() {
-    return Password;
-  }
-
-    public boolean insertrec(String firstName, String lastName,
-    String emailAddress, String companyName, String address1, String address2, String city,
-    String state, String pin, String country) {
-    boolean returnValue = false;
-    Connection connection=null;
-       try {
- connection = DriverManager.getConnection(connectionUrl, UserName, Password);
-        Statement s = connection.createStatement();
-      String sql = "INSERT INTO User" +
-        " (FirstName, LastName, EmailAddress, CompanyName, Address1, Address2, City, State, Pin, Country)" +
-        " VALUES" +
-        " ('" + firstName + "','" + lastName + "','" + emailAddress + "'," +
-        "'" + companyName + "','" + address1 + "','" + address2+ "','" + city + "','" + state + "','" + pin + "'," +
-        "'" + country + "')";
-      s.executeUpdate(sql);
-        s.close();
-       connection.close();
-      returnValue = true;
+    // Getters and setters with proper camelCase
+    public String getConnectionUrl() {
+        return connectionUrl;
     }
-    catch (SQLException e) {
-      try {
-        connection.rollback();
-        connection.close();
-      }
-      catch (SQLException se) {}
+
+    public void setConnectionUrl(String connectionUrl) {
+        this.connectionUrl = connectionUrl;
     }
-    return returnValue;
-  }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * Inserts a user record into the database.
+     *
+     * @return true if insertion was successful, false otherwise.
+     */
+    public boolean insertRec(String firstName, String lastName,
+                             String emailAddress, String companyName,
+                             String address1, String address2, String city,
+                             String state, String pin, String country) {
+        boolean returnValue = false;
+        String sql = "INSERT INTO User " +
+                "(FirstName, LastName, EmailAddress, CompanyName, Address1, Address2, City, State, Pin, Country) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        // Use try-with-resources to manage Connection and PreparedStatement automatically
+        try (Connection connection = DriverManager.getConnection(connectionUrl, userName, password);
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            // Set auto-commit false to enable transaction management if needed
+            connection.setAutoCommit(false);
+
+            preparedStatement.setString(1, firstName);
+            preparedStatement.setString(2, lastName);
+            preparedStatement.setString(3, emailAddress);
+            preparedStatement.setString(4, companyName);
+            preparedStatement.setString(5, address1);
+            preparedStatement.setString(6, address2);
+            preparedStatement.setString(7, city);
+            preparedStatement.setString(8, state);
+            preparedStatement.setString(9, pin);
+            preparedStatement.setString(10, country);
+
+            int rowsInserted = preparedStatement.executeUpdate();
+
+            connection.commit();
+
+            returnValue = (rowsInserted > 0);
+
+        } catch (SQLException e) {
+            // Log error, rollback handled by try-with-resources auto close or can be handled explicitly if you keep connection outside try
+            e.printStackTrace();
+        }
+
+        return returnValue;
+    }
 }
