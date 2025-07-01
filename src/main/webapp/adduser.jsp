@@ -2,6 +2,7 @@
 <%@ page import="java.util.*" %>
 <jsp:useBean id="userbean" scope="session" class="beans.User"/>
 <jsp:setProperty name="userbean" property="connectionUrl" value="jdbc:odbc:ecommweb"/>
+<!DOCTYPE html>
 <HTML>
 <HEAD>
 <TITLE>E-Commerce Site</TITLE>
