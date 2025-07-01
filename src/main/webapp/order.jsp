@@ -10,6 +10,7 @@
     System.out.println(e.toString());
   }
 %>
+<!DOCTYPE html>
 <HTML>
 <HEAD>
 <TITLE>E-commerce Site</TITLE>
