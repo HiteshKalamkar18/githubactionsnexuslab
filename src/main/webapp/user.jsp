@@ -1,120 +1,155 @@
-<!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
-<HEAD>
-<TITLE>E-Commerce Site</TITLE>
-</HEAD>
-<body bgcolor="#FFFFFF" text="#000000">
-<table cellpadding="6" border="0" width="750">
-  <tr> 
-    <td colspan=2><jsp:include page="header.jsp" flush="true" />  </td>
-  </tr>
-  <tr> 
-    <td valign="top"><jsp:include page="menu.jsp"  flush="true" /></td>
-    <td valign="top">
-
-    <script language="JavaScript">
-    function validate(form) {
-        if (form.firstName.value=="") {
-                alert("Please fill in your first name");
-                form.firstName.focus();
-        }
-        else if (form.lastName.value=="") {
-                alert("Please fill in your last name");
-                form.lastName.focus();
-        }
-        else if (form.emailAddress.value=="") {
-                alert("Please fill in your email address");
-                form.emailAddress.focus();
-        }
-        else if (form.address1.value=="") {
-                alert("Please fill in your street address line 1");
-                form.address1.focus();
-        }
-        else if (form.city.value=="") {
-                alert("Please fill in your city name");
-                form.city.focus();
-        }
-        else if (form.state.value=="") {
-                alert("Please fill in your state");
-                form.state.focus();
-        }
-        else if (form.pin.value=="") {
-                alert("Please fill in your pin/postal code");
-                form.pin.focus();
-        }
-        else if (form.country.value=="") {
-                alert("Please fill in your country");
-                form.country.focus();
-        }
-        else {
-               form.submit();
-        }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>E-Commerce Site</title>
+  <style>
+    label {
+      display: inline-block;
+      width: 100px;
+      font-weight: bold;
     }
-    </script>
-    
-<h1>Enter your name and contact information</h1>
+    .required {
+      color: red;
+    }
+    table {
+      width: 100%;
+      max-width: 750px;
+    }
+    input[type="text"] {
+      width: 200px;
+    }
+  </style>
+  <script>
+    function validate(form) {
+      const requiredFields = [
+        { name: "firstName", label: "First Name" },
+        { name: "lastName", label: "Last Name" },
+        { name: "emailAddress", label: "Email Address" },
+        { name: "address1", label: "Address Line 1" },
+        { name: "city", label: "City" },
+        { name: "state", label: "State" },
+        { name: "pin", label: "Pin Code" },
+        { name: "country", label: "Country" }
+      ];
 
-<form action="adduser.jsp" method=post>
-<table border="0" cellpadding="5">
-  <tr>
-    <td></td>
-    <td align=left><p>Required <font color=red>*</font></td>
-  </tr>
-  <tr>
-    <td align=right><p>First Name</td>
-    <td><input type="text" name="firstName"  size="20" maxlength=20>
-               <font color=red>*</font></td>
-  </tr>
-  <tr>
-    <td align=right><p>Last Name</td>
-    <td><input type=text name="lastName" size=20  >
-               <font color=red>*</font></td>
-  </tr>
-  <tr>
-    <td align=right><p>Email Address</td>
-    <td><input type=text name="emailAddress" size=20  >
-               <font color=red>*</font></td>
-  </tr>
-  <tr>
-    <td align=right><p>Company</td>
-    <td><input type=text name="companyName" size=20></td>
-  </tr>
-  <tr>
-    <td align=right><p>Address1</td>
-    <td><input type=text name="address1" size=20> 
-               <font color=red>*</font></td>
-  </tr>
-  <tr>
-    <td align=right><p>Address2</td>
-    <td><input type=text name="address2" size=20 ></td>
-  </tr>
-  <tr>
-    <td align=right><p>City</td>
-    <td><input type=text name="city" size=20 >
-               <font color=red>*</font></td>
-  </tr>
-  <tr>
-    <td align=right><p>State</td>
-    <td><input type=text name="state" size=20  >
-               <font color=red>*</font></td>
-  </tr>
-  <tr>
-    <td align=right><p>Pin Code</td>
-    <td><input type=text name="pin" size=20 >
-               <font color=red>*</font></td>
-  </tr>
-  <tr>
-    <td align=right><p>Country</td>
-    <td><input type=text name="country" size=20 > 
-               <font color=red>*</font></td>
-  </tr>
-  <tr>
-    <td align=right><p>&nbsp;</td>
-    <td><input type="button" value="Save" onClick="validate(this.form)"></td>
-  </tr>
-</table>
-</form>
-  </tr>
-</table>
+      for (const field of requiredFields) {
+        if (form[field.name].value.trim() === "") {
+          alert("Please fill in your " + field.label);
+          form[field.name].focus();
+          return false;
+        }
+      }
+
+      form.submit();
+    }
+  </script>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+  <table cellpadding="6" border="0">
+    <tr>
+      <td colspan="2">
+        <jsp:include page="header.jsp" flush="true" />
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">
+        <jsp:include page="menu.jsp" flush="true" />
+      </td>
+      <td valign="top">
+        <h1>Enter your name and contact information</h1>
+        <form action="adduser.jsp" method="post">
+          <table border="0" cellpadding="5">
+            <tr>
+              <td></td>
+              <td><p>Required <span class="required">*</span></p></td>
+            </tr>
+
+            <tr>
+              <td><label for="firstName">First Name</label></td>
+              <td>
+                <input type="text" name="firstName" id="firstName" required>
+                <span class="required">*</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td><label for="lastName">Last Name</label></td>
+              <td>
+                <input type="text" name="lastName" id="lastName" required>
+                <span class="required">*</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td><label for="emailAddress">Email Address</label></td>
+              <td>
+                <input type="text" name="emailAddress" id="emailAddress" required>
+                <span class="required">*</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td><label for="companyName">Company</label></td>
+              <td><input type="text" name="companyName" id="companyName"></td>
+            </tr>
+
+            <tr>
+              <td><label for="address1">Address1</label></td>
+              <td>
+                <input type="text" name="address1" id="address1" required>
+                <span class="required">*</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td><label for="address2">Address2</label></td>
+              <td><input type="text" name="address2" id="address2"></td>
+            </tr>
+
+            <tr>
+              <td><label for="city">City</label></td>
+              <td>
+                <input type="text" name="city" id="city" required>
+                <span class="required">*</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td><label for="state">State</label></td>
+              <td>
+                <input type="text" name="state" id="state" required>
+                <span class="required">*</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td><label for="pin">Pin Code</label></td>
+              <td>
+                <input type="text" name="pin" id="pin" required>
+                <span class="required">*</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td><label for="country">Country</label></td>
+              <td>
+                <input type="text" name="country" id="country" required>
+                <span class="required">*</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td></td>
+              <td>
+                <input type="button" value="Save" onclick="validate(this.form)">
+              </td>
+            </tr>
+          </table>
+        </form>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>
