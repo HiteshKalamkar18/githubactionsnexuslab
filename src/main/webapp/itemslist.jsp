@@ -1,69 +1,102 @@
 <%@ page session="true" %>
 <%@ page import="java.sql.*" %>
-<%
-  try {
-    Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>E-Commerce Site</title>
+  <style>
+    body {
+      background-color: #FFFFFF;
+      color: #000000;
+      font-family: Arial, sans-serif;
     }
-  catch (ClassNotFoundException e) {
-    System.out.println(e.toString());
-  }
-%>
-<HTML>
-<HEAD>
-<TITLE>E-Commerce Site</TITLE>
-</HEAD>
-<body bgcolor="#FFFFFF" text="#000000">
-<table cellpadding="6" border="0" width="750">
-  <tr> 
-    <td colspan=2><jsp:include page="header.jsp" flush="true" />  </td>
-  </tr>
-  <tr> 
-    <td valign="top"><jsp:include page="menu.jsp"  flush="true" /></td>
-<td valign="top" halign="left" >
-<table >
-<tr>
- <TD><FONT FACE="Arial" SIZE="4"><B>Code</B></FONT></TD>
-      <TD><FONT FACE="Arial" SIZE="4"><B>Name</B></FONT></TD>
-      <TD><FONT FACE="Arial" SIZE="4"><B>Description</B></FONT></TD>
-      <TD><FONT FACE="Arial" SIZE="4"><B>Price</B></FONT></TD>
-<TD><FONT FACE="Arial" SIZE="4"><B>Details</B></FONT></TD>
-</TR>
+    table {
+      border-collapse: collapse;
+      width: 750px;
+    }
+    td, th {
+      padding: 8px;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <table>
+    <tr>
+      <td colspan="2">
+        <jsp:include page="header.jsp" flush="true" />
+      </td>
+    </tr>
+    <tr>
+      <td valign="top">
+        <jsp:include page="menu.jsp" flush="true" />
+      </td>
+      <td valign="top">
+        <table>
+          <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Details</th>
+          </tr>
+
 <%
   String categoryId = request.getParameter("category");
-String sql;
-if (categoryId!=null)
-{
-  sql = "SELECT Pcode, Pname, Description, Price from Products where CategoryID='"+categoryId+"'";
-}
-else
-{
-  sql = "SELECT Pcode, Pname, Description, Price from Products"; 
-}
+  String sql;
+  boolean hasCategory = (categoryId != null && !categoryId.trim().isEmpty());
+
+  if (hasCategory) {
+    sql = "SELECT Pcode, Pname, Description, Price FROM Products WHERE CategoryID = ?";
+  } else {
+    sql = "SELECT Pcode, Pname, Description, Price FROM Products";
+  }
+
   try {
+    Class.forName("sun.jdbc.odbc.JdbcOdbcDriver"); // For legacy systems only
+  } catch (ClassNotFoundException e) {
+    out.println("<p style='color:red;'>JDBC Driver not found: " + e.getMessage() + "</p>");
+  }
+
+  try (
     Connection con = DriverManager.getConnection("jdbc:odbc:ecommweb");
-
-    Statement s = con.createStatement();
-    ResultSet rs = s.executeQuery(sql);
-
-    while (rs.next()) {
-String cd=rs.getString(1);
-      out.println("<TR>");
-      out.println("<TD>" + cd + "</TD>");
-      out.println("<TD>" + rs.getString(2) + "</TD>");
-      out.println("<TD>" + rs.getString(3) + "</TD>");
-      out.println("<TD>" + rs.getString(4) + "</TD>");
- out.println("<TD><A href=ProductDetails.jsp?productid="+cd+">Details</a></TD>");
-      out.println("</TR>");
+    PreparedStatement ps = con.prepareStatement(sql)
+  ) {
+    if (hasCategory) {
+      ps.setString(1, categoryId);
     }
-    rs.close();
-    s.close();
-    con.close();
-  }
-  catch (SQLException e) {
-  }
-  catch (Exception e) {
+
+    try (ResultSet rs = ps.executeQuery()) {
+      while (rs.next()) {
+        String code = rs.getString("Pcode");
+        String name = rs.getString("Pname");
+        String desc = rs.getString("Description");
+        String price = rs.getString("Price");
+%>
+          <tr>
+            <td><%= code %></td>
+            <td><%= name %></td>
+            <td><%= desc %></td>
+            <td><%= price %></td>
+            <td><a href="ProductDetails.jsp?productid=<%= code %>">Details</a></td>
+          </tr>
+<%
+      }
+    }
+  } catch (SQLException e) {
+    out.println("<p style='color:red;'>Database error: " + e.getMessage() + "</p>");
   }
 %>
-</TABLE>
-</BODY>
-</HTML>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
