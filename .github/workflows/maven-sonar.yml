@@ -28,7 +28,6 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=githubactionsnexuslab
-            -Dsonar.sources=src/main/java
             -Dsonar.java.binaries=target/Ecomm/WEB-INF/classes
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
