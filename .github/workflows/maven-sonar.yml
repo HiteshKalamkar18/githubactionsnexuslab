@@ -27,9 +27,9 @@ jobs:
         uses: sonarsource/sonarqube-scan-action@master
         with:
           args: >
-              -Dsonar.projectKey=githubactionsnexuslab
-              -Dsonar.sources=src/main/webapp/beans
-              -Dsonar.java.binaries=target/Ecomm/WEB-INF/classe
+           -Dsonar.projectKey=githubactionsnexuslab
+           -Dsonar.sources=src/main/webapp
+           -Dsonar.java.binaries=target/Ecomm/WEB-INF/classes
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
