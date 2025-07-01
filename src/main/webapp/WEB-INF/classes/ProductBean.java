@@ -2,56 +2,69 @@ package beans;
 
 import java.sql.*;
 
+/**
+ * ProductBean is responsible for database interaction to retrieve product details.
+ */
 public class ProductBean {
-  public String UserName = "";
-  public String Password = "";
-  public String connectionUrl = "";
 
-  public void setconnectionUrl(String url) {
-    connectionUrl = url;
-  }
+    private String userName = "";
+    private String password = "";
+    private String connectionUrl = "";
 
-  public void setUserName(String username) {
-    UserName = username;
-  }
-  public void setPassword(String password) {
-    Password = password;
-  }
-
-  public String getconnectionUrl() {
-    return connectionUrl;
-  }
-
-public String getUserName() {
-    return UserName;
-  }
-
-public String getPassword() {
-    return Password;
-  }
-
-    public Product getProductDetails(int productId) {
-    Product product = null;
-    try {
-      Connection connection = DriverManager.getConnection(connectionUrl, UserName, Password);
-      Statement s = connection.createStatement();
-      String sql = "SELECT Pcode, Pname, Description, Price FROM Products" +
-        " WHERE Pcode=" + productId;
-      ResultSet rs = s.executeQuery(sql);
-      if (rs.next()) {
-        product = new Product();
-        product.code = rs.getInt(1);
-        product.name = rs.getString(2);
-        product.description = rs.getString(3);
-        product.price = rs.getDouble(4);
-      }
-      rs.close();
-      s.close();
-      connection.close();
+    // Getters and setters with proper naming conventions
+    public String getConnectionUrl() {
+        return connectionUrl;
     }
-    catch (SQLException e) {}
-    return product;
-  }
 
-  
+    public void setConnectionUrl(String connectionUrl) {
+        this.connectionUrl = connectionUrl;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * Fetches product details from the database for a given product ID.
+     *
+     * @param productId the product ID to search for
+     * @return Product object if found; null otherwise
+     */
+    public Product getProductDetails(int productId) {
+        Product product = null;
+        String sql = "SELECT Pcode, Pname, Description, Price FROM Products WHERE Pcode = ?";
+
+        try (
+            Connection connection = DriverManager.getConnection(connectionUrl, userName, password);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql)
+        ) {
+            preparedStatement.setInt(1, productId);
+
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    product = new Product();
+                    product.code = rs.getInt("Pcode");
+                    product.name = rs.getString("Pname");
+                    product.description = rs.getString("Description");
+                    product.price = rs.getDouble("Price");
+                }
+            }
+        } catch (SQLException e) {
+            // Log error - in real apps use logging frameworks like SLF4J or Log4J
+            e.printStackTrace();
+        }
+        return product;
+    }
 }
