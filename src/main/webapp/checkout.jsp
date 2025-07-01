@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <HTML>
 <HEAD>
 <TITLE>E-Commerce Site</TITLE>
@@ -13,7 +14,7 @@
  <form action="<%=response.encodeURL("order.jsp")%>"  method="post">
            <TABLE>
     <TR>
-      <TD COLSPAN="2"><I><B>Delivery Details</B></I></TD>
+      <TD COLSPAN="2"><em><strong>Delivery Details</strong></em></TD>
     </TR>
     <TR>
       <TD>Contact Name:</TD>
