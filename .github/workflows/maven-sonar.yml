@@ -15,9 +15,9 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up JDK 11
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-version: '11'
 
       - name: Build with Maven
@@ -30,6 +30,7 @@ jobs:
            -Dsonar.projectKey=githubactionsnexuslab
            -Dsonar.sources=src/main/webapp
            -Dsonar.java.binaries=target/Ecomm/WEB-INF/classes
+           -Dsonar.scanner.jvmAdditionalArgs="--add-opens java.base/java.lang=ALL-UNNAMED"
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
